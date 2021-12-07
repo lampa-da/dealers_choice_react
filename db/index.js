@@ -1,10 +1,11 @@
 const Sequelize = require('sequelize')
-const {STRING, INTEGER, UUID, UUIDV4} = Sequelize
+const {STRING, INTEGER, UUID, UUIDV4, TEXT} = Sequelize
 const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/store_react_db')
 const faker = require('faker')
 
 let productData = new Array(50).fill('').map(_ => faker.commerce.productName())
 let priceData = new Array(50).fill('').map(_=> faker.commerce.price(50, 500, 2, '$'))
+let descriptionData = new Array(50).fill('').map(_=> faker.lorem.paragraphs(faker.random.number({min: 2, max: 5})))
 let userNameData = new Array(3).fill('').map(_ => faker.internet.userName())
 
 
@@ -14,6 +15,9 @@ const Product = conn.define('product', {
   },
   price: {
     type: STRING
+  },
+  description: {
+    type: TEXT
   },
   avatarUrl:{
     type: STRING,
@@ -53,7 +57,7 @@ Product.belongsToMany(Order, { through : OrderProduct })
 const syncAndSeed = async()=>{
   await conn.sync({force: true})
   const products = await Promise.all(
-    productData.map((name, idx)=> Product.create({name: name, price: priceData[idx]}))
+    productData.map((name, idx)=> Product.create({name: name, price: priceData[idx], description: descriptionData[idx]}))
   )
   const users = await Promise.all(
     userNameData.map((name)=> User.create({name: name}))

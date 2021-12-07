@@ -174,3 +174,8 @@ td {
   display: flex;
   flex-direction: row;
 }
+
+a {
+  color: inherit;
+  text-decoration: none; 
+}

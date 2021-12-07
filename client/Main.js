@@ -1,33 +1,49 @@
 import React from 'react'
 import axios from 'axios'
+import Products from './Products'
+import SingleProduct from './SingleProduct'
+
 
 class Main extends React.Component {
   constructor(){
     super()
     this.state ={
       products: [],
-      // selectedProduct: {}
+      selectedProduct: {},
+      chart: {}
     }
-    // this.selectProduct = this.selectProduct.bind(this)
-    // this.componentDidMount = this.componentDidMount.bind(this)
-    // this.playSong = this.playSong.bind(this)
+    this.selectProduct = this.selectProduct.bind(this)
   }
-  // async selectProduct(id){
-  //   const response = await axios.get(`api/products/${id}`)
-  //   const product = response.data
-  //   console.log(product)
-  //   this.setState({selectedProduct: product})
-  // }
+  async selectProduct(id){
+    if(!id){
+      this.setState({selectedProduct: {}})
+    }
+    else{
+      const response = await axios.get(`api/products/${id}`)
+      const product = response.data
+      this.setState({selectedProduct: product})
+    }
+  }
+
   async componentDidMount(){
     const response = await axios.get('/api/products')
     this.setState({products: response.data})
+    const hash = window.location.hash.slice(1)
+    if(hash){
+      this.selectProduct(hash)
+    }
+    window.addEventListener('hashchange', ()=>{
+      const hash =window.location.hash.slice(1)
+      this.selectProduct(hash)
+    })
+
   }
 
   
   render () {
     const {products, selectedProduct} = this.state
     console.log(products)
-    const {selectProduct, componentDidMount} = this
+    const {selectProduct} = this
     return (
       
         <div id='main' className='row container'>
@@ -35,7 +51,7 @@ class Main extends React.Component {
           <div id='sidebar'>
             <section>
               <h4>
-                <a>Products</a>
+                <a href='#'>Products({products.length})</a>
               </h4>
               <h4>
                 <a>Users</a>
@@ -49,20 +65,15 @@ class Main extends React.Component {
             </section>
           </div>
 
-          <div className='container'>
+          {/* <!-- All Products --> */}
+          {
+            selectedProduct.id ? (
+              <SingleProduct selectedProduct={ selectedProduct }/>
+              ):(
+              <Products products={ products }/>
+            )
 
-            {/* <!-- All Products --> */}
-            <div id='products' className='row wrap'>
-              <div className='product'>
-                <a>
-                  <img src='avatar-default.jpg' />
-                  <p>Product Name</p>
-                  <small>Price</small>
-                  <button className="add-to-cart-btn">Add to cart</button>
-                </a>
-              </div>
-          </div>
-        </div>
+          }
       </div>
     
   
