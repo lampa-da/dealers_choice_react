@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-export default class Main extends React.Component {
+class Main extends React.Component {
   constructor(){
     super()
     this.state ={
@@ -69,3 +69,4 @@ export default class Main extends React.Component {
     )
   }
 }
+export default Main
