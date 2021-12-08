@@ -14,8 +14,8 @@ const Products = (props)=>{
                   <img src='avatar-default.jpg' />
                   <p>{product.name}</p>
                   <small>{product.price}</small>
-                  <button className="add-to-cart-btn" >Add to cart</button>
                 </a>
+                  <button className="add-to-cart-btn" data-id={product.id}>Add to cart</button>
               </div>
             )
           })

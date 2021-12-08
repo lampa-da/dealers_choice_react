@@ -12,7 +12,7 @@ const SingleProduct = (props)=>{
             <img src='avatar-default.jpg' />
             <p>{selectedProduct.name}</p>
             <small>{selectedProduct.price}</small>
-            <button className="add-to-cart-btn" >Add to cart</button>
+            <button className="add-to-cart-btn" data-id={selectedProduct.id}>Add to cart</button>
           </a>
         <div>
           <h2>Description: {selectedProduct.name}</h2>

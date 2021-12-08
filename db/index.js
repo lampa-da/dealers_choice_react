@@ -47,6 +47,34 @@ const OrderProduct = conn.define('order_product', {
     type: INTEGER
   }
 });
+const Cart = conn.define('cart', {
+  id: {
+    type: UUID,
+    defaultValue: UUIDV4,
+    primaryKey: true,
+    // autoIncrement: true
+  }
+})
+const CartProduct = conn.define('cart_product', {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  cartId: {
+    type: INTEGER
+  },
+  productId: {
+    type: INTEGER
+  }
+});
+
+Cart.belongsTo(User)
+Cart.belongsTo(Product)
+// Product.belongsToMany(Cart, { through : CartProduct })
+// Cart.belongsToMany(Product, { through : CartProduct })
+
+
 
 User.hasMany(Order)
 Order.belongsTo(User)
@@ -82,7 +110,8 @@ module.exports ={
     Product, 
     Order, 
     User,
-    OrderProduct
+    OrderProduct,
+    Cart
   },
   conn,
   syncAndSeed,

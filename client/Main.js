@@ -10,9 +10,10 @@ class Main extends React.Component {
     this.state ={
       products: [],
       selectedProduct: {},
-      chart: {}
+      cart: {}
     }
     this.selectProduct = this.selectProduct.bind(this)
+    this.addToCart = this.addToCart.bind(this)
   }
   async selectProduct(id){
     if(!id){
@@ -24,10 +25,18 @@ class Main extends React.Component {
       this.setState({selectedProduct: product})
     }
   }
+  async addToCart(productId){
+    const productInCart = (await axios.get(`api/products/${productId}`)).data
+    const cart = (await axios.post('/api/cart', {productId: productInCart.id}))
+    this.setState({cart: productInCart})
+  }
 
   async componentDidMount(){
+    const resCart = await axios.get('/api/cart')
     const response = await axios.get('/api/products')
     this.setState({products: response.data})
+    this.setState({cart: resCart.data})
+    // console.log("cart", cart)
     const hash = window.location.hash.slice(1)
     if(hash){
       this.selectProduct(hash)
@@ -36,13 +45,21 @@ class Main extends React.Component {
       const hash =window.location.hash.slice(1)
       this.selectProduct(hash)
     })
+    window.addEventListener('click', async(ev)=>{
+      const target = ev.target
+      const hash =window.location.hash.slice(1)
+      if(target.tagName === 'BUTTON'){
+        let productId = target.getAttribute('data-id')
+        this.addToCart(productId)
+      }
+    })
 
   }
 
   
   render () {
-    const {products, selectedProduct} = this.state
-    console.log(products)
+    const {products, selectedProduct, cart} = this.state
+    console.log('cart', cart)
     const {selectProduct} = this
     return (
       
@@ -52,9 +69,6 @@ class Main extends React.Component {
             <section>
               <h4>
                 <a href='#'>Products({products.length})</a>
-              </h4>
-              <h4>
-                <a>Users</a>
               </h4>
               <h4>
                 <a>Orders</a>
