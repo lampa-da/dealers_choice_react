@@ -70,7 +70,7 @@ router.get('/cart', async(req, res, next)=>{
 
 router.post('/cart', async(req, res, next)=>{
   try{
-    let cart = await Cart.create(req.body)
+    let cart = await Cart.create({...req.body})
     // cart = await Cart.findByPk(cart.id, {
     //   include: [Product]
     // })

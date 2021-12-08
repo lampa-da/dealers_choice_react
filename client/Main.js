@@ -28,14 +28,19 @@ class Main extends React.Component {
   async addToCart(productId){
     const productInCart = (await axios.get(`api/products/${productId}`)).data
     const cart = (await axios.post('/api/cart', {productId: productInCart.id}))
-    this.setState({cart: productInCart})
+    console.log('sjdhhf', this.state.cart)
+    this.setState({...this.state, cart: [...this.state.cart, productInCart]})
   }
+
+  // componentWillUnmount(){
+    
+  // }
 
   async componentDidMount(){
     const resCart = await axios.get('/api/cart')
+    this.setState({cart: resCart.data}) 
     const response = await axios.get('/api/products')
     this.setState({products: response.data})
-    this.setState({cart: resCart.data})
     // console.log("cart", cart)
     const hash = window.location.hash.slice(1)
     if(hash){
@@ -51,6 +56,7 @@ class Main extends React.Component {
       if(target.tagName === 'BUTTON'){
         let productId = target.getAttribute('data-id')
         this.addToCart(productId)
+        // this.setState({cart: [...this.state.cart]})
       }
     })
 
@@ -60,7 +66,7 @@ class Main extends React.Component {
   render () {
     const {products, selectedProduct, cart} = this.state
     console.log('cart', cart)
-    const {selectProduct} = this
+    const {selectProduct, addToCart} = this
     return (
       
         <div id='main' className='row container'>
@@ -74,7 +80,7 @@ class Main extends React.Component {
                 <a>Orders</a>
               </h4>
               <h4>
-                <a>Cart</a>
+                <a>Cart({cart.length})</a>
               </h4>
             </section>
           </div>
