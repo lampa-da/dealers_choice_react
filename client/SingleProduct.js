@@ -1,9 +1,7 @@
 import React from 'react'
 
-
 const SingleProduct = (props)=>{
   const {selectedProduct} = props
-  console.log('props', props)
   return(
     <div className='container'>
       <div id='single-product' className='row wrap'>    

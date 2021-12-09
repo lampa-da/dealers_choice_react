@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Products from './Products'
 import SingleProduct from './SingleProduct'
+import Cart from './Cart'
 
 
 class Main extends React.Component {
@@ -10,10 +11,11 @@ class Main extends React.Component {
     this.state ={
       products: [],
       selectedProduct: {},
-      cart: {}
+      cart: []
     }
     this.selectProduct = this.selectProduct.bind(this)
     this.addToCart = this.addToCart.bind(this)
+    this.deleteProduct = this.deleteProduct.bind(this)
   }
   async selectProduct(id){
     if(!id){
@@ -27,21 +29,22 @@ class Main extends React.Component {
   }
   async addToCart(productId){
     const productInCart = (await axios.get(`api/products/${productId}`)).data
-    const cart = (await axios.post('/api/cart', {productId: productInCart.id}))
-    console.log('sjdhhf', this.state.cart)
+    await axios.post('/api/cart', {productId: productInCart.id})
     this.setState({...this.state, cart: [...this.state.cart, productInCart]})
   }
 
-  // componentWillUnmount(){
-    
-  // }
+  async deleteProduct(productId){
+    const productInCart = (await axios.get(`api/products/${productId}`))
+    console.log(productInCart)
+    await axios.delete(`/api/cart/${productId}`)
+    // this.setState({...this.state, cart: [...this.state.cart, productInCart]})
+  }
 
   async componentDidMount(){
     const resCart = await axios.get('/api/cart')
     this.setState({cart: resCart.data}) 
     const response = await axios.get('/api/products')
     this.setState({products: response.data})
-    // console.log("cart", cart)
     const hash = window.location.hash.slice(1)
     if(hash){
       this.selectProduct(hash)
@@ -52,11 +55,15 @@ class Main extends React.Component {
     })
     window.addEventListener('click', async(ev)=>{
       const target = ev.target
-      const hash =window.location.hash.slice(1)
-      if(target.tagName === 'BUTTON'){
+      const hash = window.location.hash.slice(1)
+      if(target.tagName === 'BUTTON' && target.className === 'add-to-cart-btn'){
         let productId = target.getAttribute('data-id')
         this.addToCart(productId)
-        // this.setState({cart: [...this.state.cart]})
+      }
+      else if(target.tagName === 'BUTTON' && target.className === 'delete-from-cart-btn'){
+        let productId = target.getAttribute('data-id')
+        console.log(productId)
+        this.deleteProduct(productId)
       }
     })
 
@@ -66,7 +73,7 @@ class Main extends React.Component {
   render () {
     const {products, selectedProduct, cart} = this.state
     console.log('cart', cart)
-    const {selectProduct, addToCart} = this
+    const {selectProduct, addToCart, deleteProduct} = this
     return (
       
         <div id='main' className='row container'>
@@ -77,14 +84,14 @@ class Main extends React.Component {
                 <a href='#'>Products({products.length})</a>
               </h4>
               <h4>
-                <a>Orders</a>
+                {/* <a>Orders</a> */}
               </h4>
               <h4>
                 <a>Cart({cart.length})</a>
               </h4>
             </section>
           </div>
-
+          <Cart cart={ cart } deleteProduct={deleteProduct}/>
           {/* <!-- All Products --> */}
           {
             selectedProduct.id ? (

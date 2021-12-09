@@ -81,6 +81,16 @@ router.post('/cart', async(req, res, next)=>{
   }
 })
 
+router.delete('/cart/:id', async(req, res, next)=> {
+  try {
+    await Cart.destroy({ where: { id: req.params.id }});
+    res.sendStatus(204);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
+
 // router.post('/cats/:id/planing_route', async(req, res, next)=>{
 //   try{
 //       let planingRoute = await PlaningRoute.create({...req.body, catId: req.params.id})
@@ -114,14 +124,6 @@ router.post('/cart', async(req, res, next)=>{
 // });
 
 
-// router.delete('/planing_routes/:id', async(req, res, next)=> {
-//   try {
-//     await PlaningRoute.destroy({ where: { id: req.params.id }});
-//     res.sendStatus(204);
-//   }
-//   catch(ex){
-//     next(ex);
-//   }
-// });
+
 
 module.exports = router
